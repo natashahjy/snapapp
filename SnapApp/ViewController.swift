@@ -8,11 +8,23 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController,
+    UIImagePickerControllerDelegate,
+    UINavigationControllerDelegate{
 
+    @IBOutlet var imageView: UIImageView!
+    
+    @IBOutlet weak var takePicture: UIButton!
+    
+    @IBOutlet weak var selectPicture: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        if !(UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera))
+        {
+            takePicture.isHidden = true
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -21,5 +33,35 @@ class ViewController: UIViewController {
     }
 
 
+    @IBAction func takePicture(sender: AnyObject){
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        
+        picker.allowsEditing = true
+        picker.sourceType = UIImagePickerControllerSourceType.camera
+        
+        self.present(picker, animated: true)
+    }
+    
+    @IBAction func selectPicture(sender: AnyObject){
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        
+        picker.allowsEditing = true
+        picker.sourceType = UIImagePickerControllerSourceType.photoLibrary
+        
+        self.present(picker, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        let chosenImage : UIImage = info[UIImagePickerControllerEditedImage] as! UIImage
+        self.imageView!.image = chosenImage
+        
+        picker.dismiss(animated: true)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
 }
 
